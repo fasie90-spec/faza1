@@ -16,12 +16,16 @@ def show_all():
     if not contacts:
         print("Your contacts list is empty!")
         return
-    for i, (name, phone) in enumerate(contacts.items(), start=1):
+    for i, (name, phone) in enumerate(sorted(contacts.items()), start=1):
         print(f"{i}. Name: {name} | Phone: {phone}")
 
 def menu():
     load_from_json()
     while True:
+        print("\n1. Add contact")
+        print("2. Delete contact")
+        print("3. Search contact")
+        print("4. Show all")
         raspuns = input("What do you want me to do?")
 
         if raspuns == "1":
@@ -30,13 +34,8 @@ def menu():
                 print("You already have a contact with this name!")
                 continue
             phone_input = input("What's the number of the person?")
-            number_exists = False
-            for name, phone in contacts.items():
-                if phone == phone_input:
-                    print(f"The number {phone} already exists as {name}!")
-                    number_exists = True
-                    break
-            if number_exists:
+            if phone_input in set(contacts.values()):
+                print("You already have this number saved!")
                 continue
             add_contact(name_input, phone_input)
             print(f"You've added {name_input} to your contacts list!")
@@ -60,7 +59,7 @@ def menu():
 
 def save_to_json():
     with open("contacts.json", "w") as f:
-        json.dump(contacts, f, indent=2)
+        json.dump(contacts, f)
     print("Contacts saved!")
 
 def load_from_json():
@@ -68,9 +67,9 @@ def load_from_json():
     try:
         with open("contacts.json", "r") as f:
             contacts = json.load(f)
-        print("Contacts loaded!")
+        print("Contacts load!")
     except FileNotFoundError:
-        print("No saved contacts found.")
+        print("No contacts to load!")
 
 
 if __name__ == "__main__":
